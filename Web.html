@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .role-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .role-title {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .role-buttons {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .role-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 30px 50px;
+            font-size: 1.5em;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .role-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .login-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-title {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background: #5568d3;
+        }
+
+        .dashboard {
+            display: none;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .top-nav {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .menu-icon {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .menu-icon span {
+            width: 25px;
+            height: 3px;
+            background: #667eea;
+            border-radius: 3px;
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .lang-btn {
+            padding: 8px 15px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .lang-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .top-menu-dropdown {
+            display: none;
+            position: absolute;
+            top: 70px;
+            left: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 20px;
+            min-width: 200px;
+            z-index: 99;
+        }
+
+        .top-menu-dropdown.active {
+            display: block;
+        }
+
+        .menu-item {
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #333;
+        }
+
+        .menu-item:hover {
+            background: #f0f0f0;
+        }
+
+        .side-menu {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: white;
+            box-shadow: 5px 0 30px rgba(0,0,0,0.2);
+            transition: left 0.3s;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 80px 0 20px 0;
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .side-menu-item {
+            padding: 18px 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #333;
+            border-left: 4px solid transparent;
+            font-size: 1em;
+        }
+
+        .side-menu-item:hover {
+            background: #f8f9fa;
+            border-left-color: #667eea;
+            color: #667eea;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .back-btn {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 18px;
+            border-radius: 15px;
+            max-width: 70%;
+        }
+
+        .message.user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.ai {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1em;
+        }
+
+        .send-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .send-btn:hover {
+            background: #5568d3;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .action-btn {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .action-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        .events-container {
+            margin-top: 20px;
+        }
+
+        .event-category {
+            margin-bottom: 30px;
+        }
+
+        .event-category-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .event-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .event-badge.upcoming {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .event-badge.ongoing {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .job-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .job-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .ar-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .ar-preview {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .ar-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .ar-btn {
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+
+        .ar-btn:hover {
+            background: #5568d3;
+        }
+
+        .resume-preview {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .resume-section {
+            margin-bottom: 30px;
+        }
+
+        .resume-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .skill-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.9em;
+        }
+
+        .gap-item {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .gap-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .content-area {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .slideshow-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slideshow-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .slides {
+            position: relative;
+            height: 300px;
+        }
+
+        .slide {
+            display: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 40px;
+            color: white;
+            height: 100%;
+        }
+
+        .slide.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h3 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .slide p {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .slide-dots {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .dot {
+            height: 12px;
+            width: 12px;
+            margin: 0 5px;
+            background-color: #ddd;
+            border-radius: 50%;
+            display: inline-block;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .dot.active {
+            background-color: #667eea;
+        }
+
+        .goals-progress {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .goal-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .course-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="role-screen" id="roleScreen">
+        <h1 class="role-title">Select Your Role</h1>
+        <div class="role-buttons">
+            <button class="role-btn" onclick="selectRole('student')">Student</button>
+            <button class="role-btn" onclick="selectRole('faculty')">Faculty</button>
+            <button class="role-btn" onclick="selectRole('admin')">Admin</button>
+        </div>
+    </div>
+
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h2 class="login-title">Student Login</h2>
+            <div class="input-group">
+                <label>Student ID</label>
+                <input type="text" id="studentIdInput" placeholder="Enter your ID">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="passwordInput" placeholder="Enter your password">
+            </div>
+            <button class="login-btn" onclick="login()">Login</button>
+        </div>
+    </div>
+
+    <div class="dashboard" id="dashboard">
+        <div class="top-nav">
+            <div class="menu-icon" onclick="toggleTopMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="language-selector">
+                <button class="lang-btn active" onclick="changeLanguage('english')">EN</button>
+                <button class="lang-btn" onclick="changeLanguage('hindi')">हिं</button>
+                <button class="lang-btn" onclick="changeLanguage('odia')">ଓଡ଼ିଆ</button>
+            </div>
+        </div>
+
+        <div class="top-menu-dropdown" id="topMenuDropdown">
+            <div class="menu-item">
+                <span>👤</span>
+                <span>Profile</span>
+            </div>
+            <div class="menu-item">
+                <span>⚙</span>
+                <span>Settings</span>
+            </div>
+            <div class="menu-item" onclick="logout()">
+                <span>🚪</span>
+                <span>Logout</span>
+            </div>
+        </div>
+
+        <div class="side-menu" id="sideMenu">
+            <div class="side-menu-item" onclick="showScreen('aiAssistant')">
+                <span>🤖</span>
+                <span>AI Assistance</span>
+            </div>
+            <div class="side-menu-item" onclick="showScreen('resume')">
+                <span>📄</span>
+                <span>Build AI Resume</span>
+            </div>
+            <div class="side-menu-item" onclick="showScreen('skills')">
+                <span>📈</span>
+                <span>Upgrade Your Skills</span>
+            </div>
+            <div class="side-menu-item" onclick="showScreen('gaps')">
+                <span>🎯</span>
+                <span>Fill Preparation Gaps</span>
+            </div>
+            <div class="side-menu-item" onclick="showScreen('hackathons')">
+                <span>💻</span>
+                <span>Hackathons</span>
+            </div>
+            <div class="side-menu-item" onclick="showScreen('olympiads')">
+                <span>🏆</span>
+                <span>Olympiads</span>
+            </div>
+            <div class="side-menu-item" onclick="showScreen('competitions')">
+                <span>🎖</span>
+                <span>Competitions</span>
+            </div>
+            <div class="side-menu-item" onclick="showScreen('jobPrep')">
+                <span>💼</span>
+                <span>Prepare for Job</span>
+            </div>
+            <div class="side-menu-item" onclick="showScreen('arLearning')">
+                <span>🥽</span>
+                <span>Learn with AR</span>
+            </div>
+        </div>
+
+        <div class="content-area screen active" id="mainContent">
+            <h2 class="slideshow-title">Welcome Back!</h2>
+            
+            <div class="slideshow-container">
+                <h3>Latest Opportunities</h3>
+                <div class="slides">
+                    <div class="slide active">
+                        <h3>🚀 Global Hackathon 2024</h3>
+                        <p>Join developers worldwide in this 48-hour coding challenge</p>
+                        <p>📅 Dec 15-17, 2024 | 💰 Prize: $50,000</p>
+                        <p>Register now and showcase your skills!</p>
+                    </div>
+                    <div class="slide">
+                        <h3>🏆 International Math Olympiad</h3>
+                        <p>Test your mathematical prowess against the best</p>
+                        <p>📅 Jan 10, 2025 | 🎖 Scholarships Available</p>
+                        <p>Early bird registration open!</p>
+                    </div>
+                    <div class="slide">
+                        <h3>💡 Innovation Challenge</h3>
+                        <p>Present your groundbreaking ideas to industry leaders</p>
+                        <p>📅 Dec 20, 2024 | 🎁 Funding up to $100K</p>
+                        <p>Submissions closing soon!</p>
+                    </div>
+                    <div class="slide">
+                        <h3>📚 Science Quiz Competition</h3>
+                        <p>Battle it out in this exciting science trivia</p>
+                        <p>📅 Dec 12, 2024 | 🏅 National Level</p>
+                        <p>Last date to register: Dec 11</p>
+                    </div>
+                </div>
+                <div class="slide-dots">
+                    <span class="dot active" onclick="currentSlide(0)"></span>
+                    <span class="dot" onclick="currentSlide(1)"></span>
+                    <span class="dot" onclick="currentSlide(2)"></span>
+                    <span class="dot" onclick="currentSlide(3)"></span>
+                </div>
+            </div>
+
+            <div class="goals-progress">
+                <div class="card">
+                    <h3 class="card-title">
+                        <span>🎯</span>
+                        <span>Your Goals</span>
+                    </h3>
+                    <div class="goal-item">
+                        <span>Complete Python Course</span>
+                        <span>✓</span>
+                    </div>
+                    <div class="goal-item">
+                        <span>Build 5 Projects</span>
+                        <span>3/5</span>
+                    </div>
+                    <div class="goal-item">
+                        <span>Learn Data Structures</span>
+                        <span>⏳</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">
+                        <span>📊</span>
+                        <span>Progress</span>
+                    </h3>
+                    <div class="goal-item">
+                        <div style="flex: 1;">
+                            <div>Web Development</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="goal-item">
+                        <div style="flex: 1;">
+                            <div>Machine Learning</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 45%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="goal-item">
+                        <div style="flex: 1;">
+                            <div>Cloud Computing</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 30px;">
+                <h3 class="card-title">Available Courses</h3>
+                <div class="courses-grid">
+                    <div class="course-card">
+                        <div class="course-icon">💻</div>
+                        <h4>Full Stack Development</h4>
+                        <p>Master frontend and backend technologies</p>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-icon">🤖</div>
+                        <h4>AI & Machine Learning</h4>
+                        <p>Dive into the world of artificial intelligence</p>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-icon">🔒</div>
+                        <h4>Cybersecurity</h4>
+                        <p>Learn to protect systems and networks</p>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-icon">📊</div>
+                        <h4>Data Science</h4>
+                        <p>Analyze and visualize complex data</p>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-icon">📱</div>
+                        <h4>Mobile App Development</h4>
+                        <p>Create apps for iOS and Android</p>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-icon">☁</div>
+                        <h4>Cloud Computing</h4>
+                        <p>Master AWS, Azure, and Google Cloud</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Assistant Screen -->
+        <div class="content-area screen" id="aiAssistantScreen">
+            <button class="back-btn" onclick="showScreen('main')">← Back to Dashboard</button>
+            <h2 style="margin-bottom: 20px; color: #333;">AI Assistant</h2>
+            
+            <div class="action-buttons">
+                <button class="action-btn" onclick="startChat('assignment')">
+                    <div style="font-size: 2em; margin-bottom: 10px;">📝</div>
+                    <div>Get Help with Assignments</div>
+                </button>
+                <button class="action-btn" onclick="startChat('pyq')">
+                    <div style="font-size: 2em; margin-bottom: 10px;">📚</div>
+                    <div>Practice Previous Year Questions</div>
+                </button>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai">
+                        Hello! I'm your AI Assistant. How can I help you today?
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Type your question here...">
+                    <button class="send-btn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resume Screen -->
+        <div class="content-area screen" id="resumeScreen">
+            <button class="back-btn" onclick="showScreen('main')">← Back to Dashboard</button>
+            <h2 style="margin-bottom: 20px; color: #333;">AI Resume Builder</h2>
+            
+            <div class="action-buttons">
+                <button class="action-btn" onclick="generateResume()">
+                    <div style="font-size: 2em; margin-bottom: 10px;">✨</div>
+                    <div>Generate AI Resume</div>
+                </button>
+                <button class="action-btn" onclick="showScreen('gaps')">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🎯</div>
+                    <div>View Preparation Gaps</div>
+                </button>
+            </div>
+
+            <div class="resume-preview">
+                <div class="resume-section">
+                    <h3>Personal Information</h3>
+                    <p><strong>Name:</strong> Student Name</p>
+                    <p><strong>Email:</strong> student@email.com</p>
+                    <p><strong>Phone:</strong> +91 1234567890</p>
+                </div>
+                <div class="resume-section">
+                    <h3>Skills</h3>
+                    <span class="skill-badge">Python</span>
+                    <span class="skill-badge">JavaScript</span>
+                    <span class="skill-badge">Web Development</span>
+                    <span class="skill-badge">Machine Learning</span>
+                    <span class="skill-badge">Data Analysis</span>
+                </div>
+                <div class="resume-section">
+                    <h3>Projects Completed</h3>
+                    <p>• E-commerce Website - Full Stack Development</p>
+                    <p>• AI Chatbot - Natural Language Processing</p>
+                    <p>• Data Visualization Dashboard - Python & Tableau</p>
+                </div>
+                <div class="resume-section">
+                    <h3>Achievements</h3>
+                    <p>• Completed Web Development Course - 95% Score</p>
+                    <p>• Won Inter-college Hackathon 2024</p>
+                    <p>• Published Research Paper on AI Ethics</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills Screen -->
+        <div class="content-area screen" id="skillsScreen">
+            <button class="back-btn" onclick="showScreen('main')">← Back to Dashboard</button>
+            <h2 style="margin-bottom: 20px; color: #333;">Upgrade Your Skills</h2>
+            
+            <div class="card">
+                <h3 class="card-title">Recommended Learning Paths</h3>
+                <div class="courses-grid">
+                    <div class="course-card">
+                        <div class="course-icon">🔥</div>
+                        <h4>Advanced Python</h4>
+                        <p>Deep dive into Python programming</p>
+                        <div class="progress-bar" style="margin-top: 15px;">
+                            <div class="progress-fill" style="width: 30%"></div>
+                        </div>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-icon">⚛</div>
+                        <h4>React Development</h4>
+                        <p>Build modern web applications</p>
+                        <div class="progress-bar" style="margin-top: 15px;">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-icon">🗄</div>
+                        <h4>Database Management</h4>
+                        <p>Master SQL and NoSQL databases</p>
+                        <div class="progress-bar" style="margin-top: 15px;">
+                            <div class="progress-fill" style="width: 50%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gaps Screen -->
+        <div class="content-area screen" id="gapsScreen">
+            <button class="back-btn" onclick="showScreen('main')">← Back to Dashboard</button>
+            <h2 style="margin-bottom: 20px; color: #333;">Fill Preparation Gaps</h2>
+            
+            <div class="card">
+                <h3 class="card-title">Areas for Improvement</h3>
+                <div class="gap-item">
+                    <h4>🔴 System Design</h4>
+                    <p>You need to improve your system design skills for better job prospects</p>
+                    <button class="action-btn" style="margin-top: 10px; padding: 15px;">Start Learning</button>
+                </div>
+                <div class="gap-item">
+                    <h4>🟡 DSA - Advanced Topics</h4>
+                    <p>Complete advanced data structures and algorithms</p>
+                    <button class="action-btn" style="margin-top: 10px; padding: 15px;">Continue Practice</button>
+                </div>
+                <div class="gap-item">
+                    <h4>🟡 Project Portfolio</h4>
+                    <p>Add 2 more projects to strengthen your resume</p>
+                    <button class="action-btn" style="margin-top: 10px; padding: 15px;">View Project Ideas</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hackathons Screen -->
+        <div class="content-area screen" id="hackathonsScreen">
+            <button class="back-btn" onclick="showScreen('main')">← Back to Dashboard</button>
+            <h2 style="margin-bottom: 20px; color: #333;">Hackathons</h2>
+            
+            <div class="events-container">
+                <div class="event-category">
+                    <div class="event-category-title">🔥 Ongoing Hackathons</div>
+                    <div class="events-grid">
+                        <div class="event-card">
+                            <span class="event-badge ongoing">Ongoing</span>
+                            <h4>Tech Innovation Challenge</h4>
+                            <p>📅 Dec 8-12, 2024</p>
+                            <p>💰 Prize Pool: $25,000</p>
+                            <p>Build innovative solutions for real-world problems</p>
+                        </div>
+                        <div class="event-card">
+                            <span class="event-badge ongoing">Ongoing</span>
+                            <h4>AI Healthcare Hackathon</h4>
+                            <p>📅 Dec 9-11, 2024</p>
+                            <p>💰 Prize Pool: $30,000</p>
+                            <p>Use AI to solve healthcare challenges</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-category">
+                    <div class="event-category-title">📅 Upcoming Hackathons</div>
+                    <div class="events-grid">
+                        <div class="event-card">
+                            <span class="event-badge upcoming">Upcoming</span>
+                            <h4>Global Hackathon 2024</h4>
+                            <p>📅 Dec 15-17, 2024</p>
+                            <p>💰 Prize Pool: $50,000</p>
+                            <p>48-hour coding challenge with global participants</p>
+                        </div>
+                        <div class="event-card">
+                            <span class="event-badge upcoming">Upcoming</span>
+                            <h4>Blockchain Innovation Hack</h4>
+                            <p>📅 Dec 20-22, 2024</p>
+                            <p>💰 Prize Pool: $40,000</p>
+                            <p>Build decentralized applications</p>
+                        </div>
+                        <div class="event-card">
+                            <span class="event-badge upcoming">Upcoming</span>
+                            <h4>Green Tech Hackathon</h4>
+                            <p>📅 Jan 5-7, 2025</p>
+                            <p>💰 Prize Pool: $35,000</p>
+                            <p>Create sustainable technology solutions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Olympiads Screen -->
+        <div class="content-area screen" id="olympiadsScreen">
+            <button class="back-btn" onclick="showScreen('main')">← Back to Dashboard</button>
+            <h2 style="margin-bottom: 20px; color: #333;">Olympiads</h2>
+            
+            <div class="events-container">
+                <div class="event-category">
+                    <div class="event-category-title">🏆 Upcoming Olympiads</div>
+                    <div class="events-grid">
+                        <div class="event-card">
+                            <span class="event-badge upcoming">Upcoming</span>
+                            <h4>International Math Olympiad</h4>
+                            <p>📅 Jan 10, 2025</p>
+                            <p>🎖 Scholarships Available</p>
+                            <p>Test your mathematical skills</p>
+                        </div>
+                        <div class="event-card">
+                            <span class="event-badge upcoming">Upcoming</span>
+                            <h4>National Science Olympiad</h4>
+                            <p>📅 Dec 18, 2024</p>
+                            <p>🎖 Medals & Certificates</p>
+                            <p>Physics, Chemistry, Biology</p>
+                        </div>
+                        <div class="event-card">
+                            <span class="event-badge upcoming">Upcoming</span>
+                            <h4>Computer Science Olympiad</h4>
+                            <p>📅 Jan 15, 2025</p>
+                            <p>🎖 International Recognition</p>
+                            <p>Programming and algorithms</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Competitions Screen -->
+        <div class="content-area screen" id="competitionsScreen">
+            <button class="back-btn" onclick="showScreen('main')">← Back to Dashboard</button>
+            <h2 style="margin-bottom: 20px; color: #333;">Competitions</h2>
+            
+            <div class="events-container">
+                <div class="event-category">
+                    <div class="event-category-title">🎖 Active Competitions</div>
+                    <div class="events-grid">
+                        <div class="event-card">
+                            <span class="event-badge ongoing">Ongoing</span>
+                            <h4>Science Quiz Competition</h4>
+                            <p>📅 Dec 12, 2024</p>
+                            <p>🏅 National Level</p>
+                            <p>Test your science knowledge</p>
+                        </div>
+                        <div class="event-card">
+                            <span class="event-badge upcoming">Upcoming</span>
+                            <h4>Debate Championship</h4>
+                            <p>📅 Dec 16, 2024</p>
+                            <p>🏅 State Level</p>
+                            <p>Showcase your speaking skills</p>
+                        </div>
+                        <div class="event-card">
+                            <span class="event-badge upcoming">Upcoming</span>
+                            <h4>Art & Design Contest</h4>
+                            <p>📅 Dec 20, 2024</p>
+                            <p>🏅 Cash Prizes</p>
+                            <p>Express your creativity</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Prep Screen -->
+        <div class="content-area screen" id="jobPrepScreen">
+            <button class="back-btn" onclick="showScreen('main')">← Back to Dashboard</button>
+            <h2 style="margin-bottom: 20px; color: #333;">Prepare for Job</h2>
+            
+            <div class="card">
+                <h3 class="card-title">Choose Your Career Path</h3>
+                <div class="job-categories">
+                    <div class="job-card">
+                        <div class="course-icon">🔒</div>
+                        <h4>Cyber Security</h4>
+                        <p>• Network Security</p>
+                        <p>• Ethical Hacking</p>
+                        <p>• Security Protocols</p>
+                        <button class="action-btn" style="margin-top: 15px; padding: 12px;">View Roadmap</button>
+                    </div>
+                    <div class="job-card">
+                        <div class="course-icon">📊</div>
+                        <h4>Data Analyst</h4>
+                        <p>• SQL & Databases</p>
+                        <p>• Data Visualization</p>
+                        <p>• Statistical Analysis</p>
+                        <button class="action-btn" style="margin-top: 15px; padding: 12px;">View Roadmap</button>
+                    </div>
+                    <div class="job-card">
+                        <div class="course-icon">💻</div>
+                        <h4>Software Developer</h4>
+                        <p>• Programming Languages</p>
+                        <p>• System Design</p>
+                        <p>• Problem Solving</p>
+                        <button class="action-btn" style="margin-top: 15px; padding: 12px;">View Roadmap</button>
+                    </div>
+                    <div class="job-card">
+                        <div class="course-icon">🗄</div>
+                        <h4>Database Management</h4>
+                        <p>• SQL & NoSQL</p>
+                        <p>• Database Design</p>
+                        <p>• Performance Tuning</p>
+                        <button class="action-btn" style="margin-top: 15px; padding: 12px;">View Roadmap</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AR Learning Screen -->
+        <div class="content-area screen" id="arLearningScreen">
+            <button class="back-btn" onclick="showScreen('main')">← Back to Dashboard</button>
+            <h2 style="margin-bottom: 20px; color: #333;">Learn with AR</h2>
+            
+            <div class="ar-container">
+                <h3 style="margin-bottom: 20px;">Experience Learning in 3D</h3>
+                <div class="ar-preview">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3em; margin-bottom: 10px;">🥽</div>
+                        <div>AR Preview Area</div>
+                        <div style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">
+                            Point your camera to scan objects
+                        </div>
+                    </div>
+                </div>
+                <div class="ar-buttons">
+                    <button class="ar-btn">📷 Scan Image in AR</button>
+                    <button class="ar-btn">🔬 View 3D Models</button>
+                    <button class="ar-btn">📐 Geometry Visualizer</button>
+                    <button class="ar-btn">⚗ Chemistry Lab</button>
+                </div>
+                <div class="card" style="margin-top: 30px;">
+                    <h3 class="card-title">Available AR Lessons</h3>
+                    <div class="courses-grid">
+                        <div class="course-card">
+                            <div class="course-icon">🔬</div>
+                            <h4>Biology</h4>
+                            <p>Explore human anatomy in 3D</p>
+                        </div>
+                        <div class="course-card">
+                            <div class="course-icon">⚗</div>
+                            <h4>Chemistry</h4>
+                            <p>Visualize molecular structures</p>
+                        </div>
+                        <div class="course-card">
+                            <div class="course-icon">📐</div>
+                            <h4>Mathematics</h4>
+                            <p>See geometric shapes in 3D</p>
+                        </div>
+                        <div class="course-card">
+                            <div class="course-icon">🌍</div>
+                            <h4>Geography</h4>
+                            <p>Explore the world interactively</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        let slideInterval;
+        let currentScreen = 'main';
+
+        function selectRole(role) {
+            document.getElementById('roleScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+        }
+
+        function login() {
+            const studentId = document.getElementById('studentIdInput').value;
+            const password = document.getElementById('passwordInput').value;
+            
+            if (studentId && password) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                startSlideshow();
+                setupMouseTracking();
+            } else {
+                alert('Please enter your credentials');
+            }
+        }
+
+        function logout() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('roleScreen').style.display = 'flex';
+            document.getElementById('studentIdInput').value = '';
+            document.getElementById('passwordInput').value = '';
+            stopSlideshow();
+            showScreen('main');
+        }
+
+        function toggleTopMenu() {
+            const menu = document.getElementById('topMenuDropdown');
+            menu.classList.toggle('active');
+        }
+
+        function changeLanguage(lang) {
+            const buttons = document.querySelectorAll('.lang-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function showScreen(screenName) {
+            // Hide all screens
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(screen => screen.classList.remove('active'));
+            
+            // Hide side menu
+            document.getElementById('sideMenu').classList.remove('active');
+            
+            // Show selected screen
+            if (screenName === 'main') {
+                document.getElementById('mainContent').classList.add('active');
+            } else if (screenName === 'aiAssistant') {
+                document.getElementById('aiAssistantScreen').classList.add('active');
+            } else if (screenName === 'resume') {
+                document.getElementById('resumeScreen').classList.add('active');
+            } else if (screenName === 'skills') {
+                document.getElementById('skillsScreen').classList.add('active');
+            } else if (screenName === 'gaps') {
+                document.getElementById('gapsScreen').classList.add('active');
+            } else if (screenName === 'hackathons') {
+                document.getElementById('hackathonsScreen').classList.add('active');
+            } else if (screenName === 'olympiads') {
+                document.getElementById('olympiadsScreen').classList.add('active');
+            } else if (screenName === 'competitions') {
+                document.getElementById('competitionsScreen').classList.add('active');
+            } else if (screenName === 'jobPrep') {
+                document.getElementById('jobPrepScreen').classList.add('active');
+            } else if (screenName === 'arLearning') {
+                document.getElementById('arLearningScreen').classList.add('active');
+            }
+            
+            currentScreen = screenName;
+        }
+
+        function startChat(type) {
+            const chatMessages = document.getElementById('chatMessages');
+            let message = '';
+            
+            if (type === 'assignment') {
+                message = 'I can help you with your assignments! Please share the subject and topic you need help with.';
+            } else if (type === 'pyq') {
+                message = 'Let\'s practice! Which subject would you like to practice? (Math, Science, Programming, etc.)';
+            }
+            
+            chatMessages.innerHTML = `
+                <div class="message ai">Hello! I'm your AI Assistant. How can I help you today?</div>
+                <div class="message ai">${message}</div>
+            `;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                const chatMessages = document.getElementById('chatMessages');
+                
+                // Add user message
+                const userMsg = document.createElement('div');
+                userMsg.className = 'message user';
+                userMsg.textContent = message;
+                chatMessages.appendChild(userMsg);
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const aiMsg = document.createElement('div');
+                    aiMsg.className = 'message ai';
+                    aiMsg.textContent = 'I understand your question. Let me help you with that...';
+                    chatMessages.appendChild(aiMsg);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+                
+                input.value = '';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        function generateResume() {
+            alert('Generating your AI-powered resume based on your progress and achievements!');
+        }
+
+        function startSlideshow() {
+            slideInterval = setInterval(() => {
+                currentSlideIndex = (currentSlideIndex + 1) % 4;
+                showSlide(currentSlideIndex);
+            }, 4000);
+        }
+
+        function stopSlideshow() {
+            if (slideInterval) {
+                clearInterval(slideInterval);
+            }
+        }
+
+        function currentSlide(n) {
+            currentSlideIndex = n;
+            showSlide(n);
+            stopSlideshow();
+            startSlideshow();
+        }
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slides[n].classList.add('active');
+            dots[n].classList.add('active');
+        }
+
+        function setupMouseTracking() {
+            document.addEventListener('mousemove', (e) => {
+                const sideMenu = document.getElementById('sideMenu');
+                if (e.clientX < 50) {
+                    sideMenu.classList.add('active');
+                } else if (e.clientX > 300) {
+                    sideMenu.classList.remove('active');
+                }
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            const topMenu = document.getElementById('topMenuDropdown');
+            const menuIcon = document.querySelector('.menu-icon');
+            
+            if (!topMenu.contains(e.target) && !menuIcon.contains(e.target)) {
+                topMenu.classList.remove('active');
+            }
+        });
+
+        // Handle Enter key in chat input
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JJK Domain Expansion AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- MediaPipe Hands -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <!-- Background Container for Three.js -->
+    <div id="canvas-container"></div>
+
+    <!-- Webcam Video (Hidden or Minimized) -->
+    <video id="input_video" class="input_video" playsinline></video>
+
+    <!-- UI Overlay -->
+    <div class="ui-overlay">
+        <header>
+            <h1>CURSED ENERGY DETECTED</h1>
+            <div class="status-indicator">
+                <span class="pulse"></span>
+                <span id="status-text">INITIALIZING...</span>
+            </div>
+        </header>
+
+        <main>
+            <div id="domain-name-container">
+                <h2 id="domain-name" class="glitch" data-text=""></h2>
+                <p id="domain-description"></p>
+            </div>
+        </main>
+
+        <footer>
+            <div class="webcam-preview">
+                <canvas id="output_canvas"></canvas>
+            </div>
+            <div class="gestures-guide">
+                <h3>AVAILABLE DOMAINS</h3>
+                <ul>
+                    <li><span class="key">🤞</span> Unlimited Void</li>
+                    <li><span class="key">🙏</span> Malevolent Shrine</li>
+                    <li><span class="key">🤘</span> Chimera Shadow Garden</li>
+                    <li><span class="key">🤝</span> Coffin of the Iron Mountain</li>
+                    <li><span class="key">👐</span> Self-Embodiment of Perfection</li>
+                    <li><span class="key">🫳</span> Horizon of the Captivating Skandha</li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="gesture_recognition.js"></script>
+    <!-- Particle Effects -->
+    <script src="particles/unlimitedVoid.js"></script>
+    <script src="particles/malevolentShrine.js"></script>
+    <script src="particles/chimeraShadowGarden.js"></script>
+    <script src="particles/ironMountain.js"></script>
+    <script src="particles/selfEmbodiment.js"></script>
+    <script src="particles/skandha.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
