@@ -34,9 +34,11 @@ window.addEventListener('resize', () => {
 });
 
 // --- MediaPipe Hands Setup ---
-const hands = new Hands({locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-}});
+const hands = new Hands({
+    locateFile: (file) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+    }
+});
 
 hands.setOptions({
     maxNumHands: 2,
@@ -50,7 +52,7 @@ hands.onResults(onResults);
 // --- Camera Setup ---
 const cameraUtils = new Camera(VIDEO_element, {
     onFrame: async () => {
-        await hands.send({image: VIDEO_element});
+        await hands.send({ image: VIDEO_element });
     },
     width: 1280,
     height: 720
@@ -60,48 +62,81 @@ cameraUtils.start();
 // --- Gesture Recognition Integration ---
 // dependent on gesture_recognition.js loading first
 const gestureRecognizer = new GestureRecognizer();
+const soundManager = new SoundManager();
 
 function onResults(results) {
     // Draw landmarks on the preview canvas
     CANVAS_CTX.save();
     CANVAS_CTX.clearRect(0, 0, CANVAS_element.width, CANVAS_element.height);
     CANVAS_CTX.drawImage(results.image, 0, 0, CANVAS_element.width, CANVAS_element.height);
-    
+
     if (results.multiHandLandmarks) {
         for (const landmarks of results.multiHandLandmarks) {
             drawConnectors(CANVAS_CTX, landmarks, HAND_CONNECTIONS,
-                           {color: '#00FF00', lineWidth: 2});
-            drawLandmarks(CANVAS_CTX, landmarks, {color: '#FF0000', lineWidth: 1});
+                { color: '#00FF00', lineWidth: 2 });
+            drawLandmarks(CANVAS_CTX, landmarks, { color: '#FF0000', lineWidth: 1 });
         }
 
         // Logic
         const detectedGesture = gestureRecognizer.predict(results.multiHandLandmarks);
-        handleGesture(detectedGesture);
+        handleGesture(detectedGesture, results.multiHandLandmarks[0]);
     }
     CANVAS_CTX.restore();
 }
 
-function handleGesture(gesture) {
+let isCharging = false;
+
+function handleGesture(gesture, handLandmarks) {
     if (!gesture) {
         lastGesture = null;
+        isCharging = false;
         return;
     }
 
     if (gesture === lastGesture) {
         const holdDuration = Date.now() - gestureHoldStart;
+
+        // CHARGING VISUALS
+        if (holdDuration < ACTIVATION_THRESHOLD && currentDomain !== gesture) {
+            if (!isCharging) {
+                isCharging = true;
+                soundManager.playCharge();
+            }
+
+            // Draw Charging Circle/Aura around wrist (landmark 0) or center
+            const progress = holdDuration / ACTIVATION_THRESHOLD;
+            const wrist = handLandmarks[0];
+            const centerX = wrist.x * CANVAS_element.width;
+            const centerY = wrist.y * CANVAS_element.height;
+
+            CANVAS_CTX.beginPath();
+            CANVAS_CTX.arc(centerX, centerY, 30 + (10 * Math.sin(Date.now() * 0.02)), 0, 2 * Math.PI);
+            CANVAS_CTX.strokeStyle = `rgba(0, 255, 255, ${progress})`;
+            CANVAS_CTX.lineWidth = 5;
+            CANVAS_CTX.stroke();
+
+            CANVAS_CTX.beginPath();
+            CANVAS_CTX.arc(centerX, centerY, 40 * progress, 0, 2 * Math.PI);
+            CANVAS_CTX.fillStyle = `rgba(255, 0, 0, 0.3)`;
+            CANVAS_CTX.fill();
+        }
+
         if (holdDuration > ACTIVATION_THRESHOLD && currentDomain !== gesture) {
+            isCharging = false; // Reset charge state
             activateDomain(gesture);
         }
     } else {
         lastGesture = gesture;
         gestureHoldStart = Date.now();
+        isCharging = false;
     }
 }
 
 function activateDomain(domainKey) {
     console.log(`Activating Domain: ${domainKey}`);
     currentDomain = domainKey;
-    
+    soundManager.playActivation(domainKey);
+
     // Update UI
     const domainData = getDomainData(domainKey);
     updateUI(domainData);
@@ -113,20 +148,20 @@ function activateDomain(domainKey) {
 
 function getDomainData(key) {
     const data = {
-        'unlimited_void': { 
-            name: 'Unlimited Void', 
+        'unlimited_void': {
+            name: 'Unlimited Void',
             desc: 'Infinite Information. Absolute Stasis.',
             color: '#a855f7'
         },
-        'malevolent_shrine': { 
-            name: 'Malevolent Shrine', 
+        'malevolent_shrine': {
+            name: 'Malevolent Shrine',
             desc: 'Relentless Slashing. Divine Techinque.',
-            color: '#ef4444' 
+            color: '#ef4444'
         },
-        'chimera_shadow_garden': { 
-            name: 'Chimera Shadow Garden', 
+        'chimera_shadow_garden': {
+            name: 'Chimera Shadow Garden',
             desc: 'Shadows become fluid. Potential unleashed.',
-            color: '#10b981' 
+            color: '#10b981'
         },
         'iron_mountain': {
             name: 'Coffin of the Iron Mountain',
@@ -163,7 +198,7 @@ function updateUI(data) {
     container.classList.add('active');
 
     // Add screen shake or other simple DOM manipulations here
-    gsap.fromTo("body", {x: -10}, {x: 10, duration: 0.1, yoyo: true, repeat: 5});
+    gsap.fromTo("body", { x: -10 }, { x: 10, duration: 0.1, yoyo: true, repeat: 5 });
 }
 
 // --- Particle System Management ---
@@ -188,7 +223,7 @@ function clearCurrentEffect() {
 }
 
 function startParticleEffect(key) {
-    switch(key) {
+    switch (key) {
         case 'unlimited_void':
             if (window.initUnlimitedVoid) currentEffectCleanup = window.initUnlimitedVoid(scene);
             break;
