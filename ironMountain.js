@@ -4,7 +4,8 @@
 window.initIronMountain = function (scene) {
     const particleCount = 1000;
     const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
+    const initialPositions = new Float32Array(particleCount * 3);
+    const targetPositions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
 
     const colorHot = new THREE.Color(0xffff00); // Yellow
@@ -13,12 +14,16 @@ window.initIronMountain = function (scene) {
 
     for (let i = 0; i < particleCount; i++) {
         const i3 = i * 3;
-        positions[i3] = (Math.random() - 0.5) * 10;
-        positions[i3 + 1] = (Math.random() - 0.5) * 10;
-        positions[i3 + 2] = (Math.random() - 0.5) * 10;
+        // Target: Box
+        targetPositions[i3] = (Math.random() - 0.5) * 10;
+        targetPositions[i3 + 1] = (Math.random() - 0.5) * 10;
+        targetPositions[i3 + 2] = (Math.random() - 0.5) * 10;
 
-        // Gradient coloring based on height (hotter lower?)
-        // Let's just mix random fire colors
+        // Initial: Center
+        initialPositions[i3] = (Math.random() - 0.5) * 0.4;
+        initialPositions[i3 + 1] = (Math.random() - 0.5) * 0.4;
+        initialPositions[i3 + 2] = (Math.random() - 0.5) * 0.4;
+
         const rand = Math.random();
         const c = rand > 0.6 ? colorHot : (rand > 0.3 ? colorMed : colorCool);
 
@@ -27,14 +32,14 @@ window.initIronMountain = function (scene) {
         colors[i3 + 2] = c.b;
     }
 
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(initialPositions), 3));
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
         size: 0.2,
         vertexColors: true,
         transparent: true,
-        opacity: 0.8,
+        opacity: 0,
         blending: THREE.AdditiveBlending
     });
 
@@ -42,26 +47,41 @@ window.initIronMountain = function (scene) {
     embers.userData.isEffect = true;
     scene.add(embers);
 
+    // Animation Data
+    const animationData = { progress: 0 };
+
+    gsap.to(animationData, {
+        progress: 1,
+        duration: 1.5,
+        ease: "power2.out",
+        onUpdate: () => {
+            const positions = embers.geometry.attributes.position.array;
+            material.opacity = animationData.progress * 0.8;
+
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                positions[i3] = THREE.MathUtils.lerp(initialPositions[i3], targetPositions[i3], animationData.progress);
+                positions[i3 + 1] = THREE.MathUtils.lerp(initialPositions[i3 + 1], targetPositions[i3 + 1], animationData.progress);
+                positions[i3 + 2] = THREE.MathUtils.lerp(initialPositions[i3 + 2], targetPositions[i3 + 2], animationData.progress);
+            }
+            embers.geometry.attributes.position.needsUpdate = true;
+        }
+    });
+
     const animate = () => {
         if (!embers.parent) return;
 
-        const positions = embers.geometry.attributes.position.array;
+        if (animationData.progress > 0.9) {
+            const positions = embers.geometry.attributes.position.array;
+            for (let i = 0; i < particleCount; i++) {
+                const yIdx = i * 3 + 1;
+                positions[yIdx] += 0.05;
+                positions[i * 3] += (Math.random() - 0.5) * 0.02; // Jitter
 
-        for (let i = 0; i < particleCount; i++) {
-            const yIdx = i * 3 + 1;
-            // Embers rise
-            positions[yIdx] += 0.05;
-
-            // Jitter x/z
-            positions[i * 3] += (Math.random() - 0.5) * 0.02;
-            positions[i * 3 + 2] += (Math.random() - 0.5) * 0.02;
-
-            // Reset
-            if (positions[yIdx] > 5) {
-                positions[yIdx] = -5;
+                if (positions[yIdx] > 5) positions[yIdx] = -5;
             }
+            embers.geometry.attributes.position.needsUpdate = true;
         }
-        embers.geometry.attributes.position.needsUpdate = true;
 
         requestAnimationFrame(animate);
     };
